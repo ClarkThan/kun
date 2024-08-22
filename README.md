@@ -78,6 +78,10 @@ $ go install github.com/RussellLuo/kun/cmd/kungen@latest
 ```bash
 $ kungen -h
 kungen [flags] source-file interface-name
+  -apidoc
+    	whether to generate OASv2 api doc (default false)
+  -client
+    	whether to generate http client (default false)
   -flat
     	whether to use flat layout (default true)
   -fmt

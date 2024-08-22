@@ -17,6 +17,7 @@ var (
 {{- $srcPkgName := .Data.SrcPkgName}}
 {{- $endpointPkgPrefix := .PkgInfo.EndpointPkgPrefix}}
 {{- $enableTracing := .Opts.EnableTracing}}
+{{- $enableAPIDoc := .Opts.EnableAPIDoc}}
 
 package {{.PkgInfo.CurrentPkgName}}
 
@@ -50,7 +51,9 @@ func NewHTTPRouter(svc {{$.Data.SrcPkgQualifier}}{{$.Data.InterfaceName}}, codec
 	r.Method("PUT", "/trace", xnet.HTTPHandler(contextor))
 	{{- end}}
 
+	{{if $enableAPIDoc -}}
 	r.Method("GET", "{{.Spec.Metadata.DocsPath}}", oas2.Handler(OASv2APIDoc, options.ResponseSchema()))
+	{{- end}}
 
 	var codec httpcodec.Codec
 	var validator httpoption.Validator
@@ -169,6 +172,8 @@ type Options struct {
 	SchemaTag     string
 	Formatted     bool
 	EnableTracing bool
+	EnableAPIDoc  bool
+	EnableClient  bool
 }
 
 type Generator struct {

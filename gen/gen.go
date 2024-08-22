@@ -33,6 +33,8 @@ type Options struct {
 	Formatted     bool
 	SnakeCase     bool
 	EnableTracing bool
+	EnableAPIDoc  bool
+	EnableClient  bool
 }
 
 type Generator struct {
@@ -61,6 +63,8 @@ func New(opts *Options) *Generator {
 			SchemaTag:     opts.SchemaTag,
 			Formatted:     opts.Formatted,
 			EnableTracing: opts.EnableTracing,
+			EnableAPIDoc:  opts.EnableAPIDoc,
+			EnableClient:  opts.EnableClient,
 		}),
 		httpclient: httpclient.New(&httpclient.Options{
 			SchemaPtr: opts.SchemaPtr,
@@ -192,18 +196,22 @@ func (g *Generator) generateHTTP(data *ifacetool.Data, spec *openapi.Specificati
 	files = append(files, f)
 
 	// Generate the HTTP client code.
-	f, err = g.httpclient.Generate(pkgInfo, data, spec)
-	if err != nil {
-		return files, err
+	if g.opts.EnableClient {
+		f, err = g.httpclient.Generate(pkgInfo, data, spec)
+		if err != nil {
+			return files, err
+		}
+		files = append(files, f)
 	}
-	files = append(files, f)
 
 	// Generate the helper OAS2 code.
-	f, err = g.oas2.Generate(pkgInfo, spec)
-	if err != nil {
-		return files, err
+	if g.opts.EnableAPIDoc {
+		f, err = g.oas2.Generate(pkgInfo, spec)
+		if err != nil {
+			return files, err
+		}
+		files = append(files, f)
 	}
-	files = append(files, f)
 
 	return files, nil
 }
