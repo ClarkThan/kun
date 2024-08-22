@@ -21,6 +21,8 @@ type userFlags struct {
 	snakeCase     bool
 	enableTracing bool
 	force         bool
+	enableAPIDoc  bool
+	enableClient  bool
 
 	args []string
 }
@@ -32,6 +34,8 @@ func main() {
 	flag.BoolVar(&flags.formatted, "fmt", true, "whether to make code formatted")
 	flag.BoolVar(&flags.snakeCase, "snake", true, "whether to use snake-case for default names")
 	flag.BoolVar(&flags.enableTracing, "trace", false, "whether to enable tracing")
+	flag.BoolVar(&flags.enableAPIDoc, "apidoc", false, "whether to generate OASv2 api doc")
+	flag.BoolVar(&flags.enableClient, "client", false, "whether to generate http client")
 	flag.BoolVar(&flags.force, "force", false, "whether to remove previously generated files before generating new ones")
 
 	flag.Usage = func() {
@@ -75,6 +79,8 @@ func run(flags userFlags) error {
 		SnakeCase:     flags.snakeCase,
 		Formatted:     flags.formatted,
 		EnableTracing: flags.enableTracing,
+		EnableAPIDoc:  flags.enableAPIDoc,
+		EnableClient:  flags.enableClient,
 	})
 	files, err := generator.Generate(srcFilename, interfaceName)
 	if err != nil {
